@@ -4,12 +4,13 @@
   </head>
   <body>
     <ul>
-      <li> apple </li>
-      <li> banana </li>
-      <li> pear </li>
+      {% for item, quantity in items.items() %}
+        <li>{{ item }}: {{ quantity }}</li>
+      {% endfor %}
     </ul>
     <form method="POST">
-      <input type="text" name="item"/>
+      <label>Item</label><input type="text" name="item"/></p>
+      <label>Quantity</label><input type="text" name="quantity"/>
       <input type="submit"/>
     </form>
   </body>
