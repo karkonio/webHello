@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block body %}
+    <ul>
+      {% for item, quantity in items.items() %}
+        <li>{{ item }}: {{ quantity }}</li>
+      {% endfor %}
+    </ul>
+    <form method="POST">
+      <label>Item</label><input type="text" name="item"/></p>
+      <label>Quantity</label><input type="text" name="quantity"/>
+      <input type="submit"/>
+    </form>
+{% endblock %}
