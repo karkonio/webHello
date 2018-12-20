@@ -9,7 +9,7 @@
       
     {% for item, quantity in items.items() %}
       <li>
-        <input type="text" value="{{ item }}" name="{{ item }}">
+        <input type="text" value="{{ item }}" name="{{ item }}_name">
         <input type="text" value="{{ quantity }}" name="{{ item }}_quantity">
         <input type="checkbox" name="{{ item }}_delete">
       </li>

@@ -13,16 +13,6 @@ def index():
     return render_template('index.html')
 
 
-def is_key_item(key):
-    if 'quantity' in key:
-        return False
-    if 'delete' in key:
-        return False
-    if key == 'add':
-        return False
-    return True
-
-
 @app.route('/items', methods=['GET', 'POST'])
 def items():
     """
@@ -34,14 +24,14 @@ def items():
         items = json.load(f)
         if request.method == 'POST':
             if 'add' in request.form:
-                print(request.form)
                 items['_'] = 0
             else:
                 items = {}
             for key in request.form:
-                if is_key_item(key):
+                print(request.form)
+                if key.endswith('name'):
                     item = request.form[key]
-                    quantity_key = key + '_quantity'
+                    quantity_key = key[:-5] + '_quantity'
                     quantity = request.form[quantity_key]
                     items[item] = int(quantity)
             for key in request.form:
