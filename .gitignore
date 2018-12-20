@@ -1,2 +1,4 @@
 __pycache__
 db.txt
+.coverage
+.pytest_cache

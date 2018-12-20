@@ -5,7 +5,7 @@
   <body>
     <ul>
       {% for item, quantity in items.items() %}
-        <li>{{ item }}: {{ quantity }}</li>
+        <input value="{{ item }}: {{ quantity }}
       {% endfor %}
     </ul>
     <form method="POST">

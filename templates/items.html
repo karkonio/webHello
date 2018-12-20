@@ -1,25 +1,24 @@
 {% extends "layout.html" %}
 {% block body %}
-  <ul>
-    {% for item, quantity in items.items() %}
-      <li>{{ item }}: {{ quantity }}</li>
-    {% endfor %}
-  </ul>
   <form method="POST">
-
-    <label>Item </label><input type="text" name="item">
-    <label>Quantity </label><input type="text" name="quantity"/>
-    <input type="submit"/ value="Add to Cart">
-
-    <br/><br/><label>Remove Item </label><input type="text" name="remove_item"/>
-    <input type="submit" value="Remove from Cart"/>
-
-    <br/><br/><label>Change Item: old </label><input type="text" name="old_item"/>
-    <label>new</label><input type="text" name="new_item"/>
-    <input type="submit" value="Change the quantity"/>
-
-    <br/><br/><label>Change Quantity: item </label><input type="text" name="item_name"/>
-    <label>quantity</label><input type="text" name="new_quan"/>
-    <input type="submit" value="Change the quantity"/>
+    <ul>
+      
+        <input type="text" value="Item" style="border-color:white; border-width:0;">
+        <input type="text" value="Quantity" style="border-color:white; border-width:0;">
+        <input type="text" value="Delete" style="border-color:white; border-width:0;">
+      
+    {% for item, quantity in items.items() %}
+      <li>
+        <input type="text" value="{{ item }}" name="{{ item }}">
+        <input type="text" value="{{ quantity }}" name="{{ item }}_quantity">
+        <input type="checkbox" name="{{ item }}_delete">
+      </li>
+    {% endfor %}
+    </ul>
+    <input type="submit" value="Update">
+  </form>
+  <form method="POST">
+    <input type="hidden" name="add">
+    <input type="submit" value="Add">
   </form>
 {% endblock %}
