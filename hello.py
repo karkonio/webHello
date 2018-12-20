@@ -27,17 +27,18 @@ def is_key_item(key):
 def items():
     """
     Returns items page
+    Updates, removes and add items
     Loads data from db.txt as json
     """
     with open('db.txt', 'r') as f:
         items = json.load(f)
         if request.method == 'POST':
             if 'add' in request.form:
+                print(request.form)
                 items['_'] = 0
             else:
                 items = {}
             for key in request.form:
-                print(key)
                 if is_key_item(key):
                     item = request.form[key]
                     quantity_key = key + '_quantity'
