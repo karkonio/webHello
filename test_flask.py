@@ -11,6 +11,15 @@ def client():
     return client
 
 
+@pytest.fixture
+def db_data():
+    cart = {
+        'banana': 5,
+        'grapes': 100
+    }
+    return StringIO(json.dumps(cart))
+
+
 def test_index(client):
     response = client.get('/')
     response = response.data.decode('utf-8')
@@ -25,13 +34,9 @@ def test_get_items(client):
         assert 'value="test"' and 'value="1"' in response
 
 
-def test_post_items_update(client):
+def test_post_items_update(client, db_data):
     with mock.patch('hello.open') as mocked:
-        cart = {
-            'banana': 5,
-            'grapes': 100
-        }
-        mocked.return_value = StringIO(json.dumps(cart))
+        mocked.return_value = db_data
         response = client.post(
             '/items',
             data={
@@ -61,13 +66,20 @@ def test_post_items_add(client):
         assert 'value="test"' and 'value="1"' in response
 
 
-def test_post_items_remove(client):
+def test_post_items_remove(client, db_data):
     with mock.patch('hello.open') as mocked:
-        mocked.return_value = StringIO('{"test": 1}')
+        mocked.return_value = db_data
         response = client.post(
             '/items', data={
-
+                'banana': 'banana',
+                'banana_quantity': 5,
+                'grapes': 'grapes',
+                'grapes_quantity': 100,
+                'grapes_delete': 'on'
             }
         )
         response = response.data.decode('utf-8')
-        assert '<input type="submit" value="Update">' in response
+        assert '<input type="text" value="banana" name="banana">' in response
+        assert '<input type="text" value="5" name="banana_quantity">' \
+            in response
+        assert 'grapes' not in response
