@@ -1,3 +1,4 @@
+import json
 import pytest
 from io import StringIO
 from unittest import mock
@@ -24,6 +25,31 @@ def test_get_items(client):
         assert 'value="test"' and 'value="1"' in response
 
 
+def test_post_items_update(client):
+    with mock.patch('hello.open') as mocked:
+        cart = {
+            'banana': 5,
+            'grapes': 100
+        }
+        mocked.return_value = StringIO(json.dumps(cart))
+        response = client.post(
+            '/items',
+            data={
+                'banana': 'banana',
+                'banana_quantity': 5,
+                'grapes': 'apple',
+                'grapes_quantity': 100
+            }
+        )
+        response = response.data.decode('utf-8')
+        assert '<input type="text" value="banana" name="banana">' in response
+        assert '<input type="text" value="5" name="banana_quantity">' \
+            in response
+        assert '<input type="text" value="apple" name="apple">' in response
+        assert '<input type="text" value="100" name="apple_quantity">' \
+            in response
+
+
 def test_post_items_add(client):
     with mock.patch('hello.open') as mocked:
         mocked.return_value = StringIO('{"_": 0}')
@@ -39,6 +65,9 @@ def test_post_items_remove(client):
     with mock.patch('hello.open') as mocked:
         mocked.return_value = StringIO('{"test": 1}')
         response = client.post(
-            '/items', data={})
+            '/items', data={
+
+            }
+        )
         response = response.data.decode('utf-8')
         assert '<input type="submit" value="Update">' in response
