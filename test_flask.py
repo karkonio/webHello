@@ -75,25 +75,11 @@ def test_post_items_add(client, db_data):
         response = client.post(
             '/items',
             data={
-                'banana_name': 'banana',
-                'banana_quantity': 5,
-                'grapes_name': 'grapes',
-                'grapes_quantity': 100,
-                '__name': 'apple',
-                '__quantity': 7
+                'add': ''
             }
         )
         response = response.data.decode('utf-8')
-        print(response)
-        assert '<input type="text" value="banana" name="banana_name">' \
+        assert '<input type="text" value="_" name="__name">' \
             in response
-        assert '<input type="text" value="5" name="banana_quantity">' \
-            in response
-        assert '<input type="text" value="grapes" name="grapes_name">' \
-            in response
-        assert '<input type="text" value="100" name="grapes_quantity">' \
-            in response
-        assert '<input type="text" value="apple" name="apple_name">' \
-            in response
-        assert '<input type="text" value="7" name="apple_quantity">' \
+        assert '<input type="text" value="0" name="__quantity">' \
             in response
