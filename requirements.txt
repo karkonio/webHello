@@ -2,9 +2,11 @@ atomicwrites==1.2.1
 attrs==18.2.0
 Click==7.0
 coverage==4.5.2
+cssselect==1.0.3
 Flask==1.0.2
 itsdangerous==1.1.0
 Jinja2==2.10
+lxml==4.2.5
 MarkupSafe==1.1.0
 more-itertools==4.3.0
 pkg-resources==0.0.0

@@ -1,12 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
   <form method="POST">
-    <ul>
-      
-        <input type="text" value="Item" style="border-color:white; border-width:0;">
-        <input type="text" value="Quantity" style="border-color:white; border-width:0;">
-        <input type="text" value="Delete" style="border-color:white; border-width:0;">
-      
+    <ul>      
     {% for item, quantity in items.items() %}
       <li>
         <input type="text" value="{{ item }}" name="{{ item }}_name">
