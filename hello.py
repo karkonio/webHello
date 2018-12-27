@@ -28,7 +28,6 @@ def items():
             else:
                 items = {}
             for key in request.form:
-                print(request.form)
                 if key.endswith('name'):
                     item = request.form[key]
                     quantity_key = key[:-5] + '_quantity'
