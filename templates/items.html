@@ -4,9 +4,15 @@
     <div class="row"> 
     {% for item, quantity in items.items() %}
       <div class="input-group">
-        <input class="form-control" type="text" value="{{ item }}" name="{{ item }}_name">
-        <input class="form-control"  type="text" value="{{ quantity }}" name="{{ item }}_quantity">
-        <input class="form-control"  type="checkbox" name="{{ item }}_delete">
++        <div class="col-sm">^M
++          <input class="form-control" type="text" value="{{ item }}" name="{{ item }}_name">^M
++        </div>^M
++        <div class="col-sm">^M
++          <input class="form-control"  type="text" value="{{ quantity }}" name="{{ item }}_quantity">^M
++        </div>^M
++        <div class="col-sm">^M
++          <input class="form-control"  type="checkbox" name="{{ item }}_delete">^M
++        </div>
       </div>
     {% endfor %}
     </div>
