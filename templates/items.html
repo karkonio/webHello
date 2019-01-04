@@ -1,17 +1,21 @@
 {% extends "layout.html" %}
 {% block body %}
-  <h1><p class="bg-info bg-lg"><img src="https://4vector.com/iraw/free-vector-shopping-cart-clip-art_110489_Shopping_Cart_clip_art_hight.png" class="img-responsive" width="8%" /> SMART CART </p></h1>
+  <h1><p class="bg-lg" style="background-color:#FFD700">
+    <img src="https://4vector.com/iraw/free-vector-shopping-cart-clip-art_110489_Shopping_Cart_clip_art_hight.png" class="img-responsive" width="8%" /> 
+      SMART CART 
+    </p>
+  </h1>
   <form method="POST" class="form">   
-    <div class="row">
-      <div class="col-3">Item</div>
-      <div class="col-3">Quantity</div>
-      <div class="col-1">Remove from cart</div>
+    <div class="row" >
+        <div class="col-3"><h3>Item</h3></div>
+        <div class="col-3"><h3>Quantity</h3></div>
+        <div class="col-1"><img src="https://cdn2.iconfinder.com/data/icons/color-svg-vector-icons-2/512/remove_product_delete-512.png" class="img-responsive" width="88%" /></div>
     </div>
     <div class="row"> 
     {% for item, quantity in items.items() %}
       <div class="input-group">
         <div class="col-3">
-          <input class="form-control" type="text" value="{{ item }}" name="{{ item }}_name">
+          <input class="form-control" type="text" value="{{ item }}" name="{{ item }}_name"">
         </div>
         <div class="col-3">
           <input class="form-control"  type="text" value="{{ quantity }}" name="{{ item }}_quantity">
