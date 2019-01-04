@@ -1,29 +1,39 @@
 {% extends "layout.html" %}
 {% block body %}
+  <h1><p class="bg-info bg-lg"><img src="https://4vector.com/iraw/free-vector-shopping-cart-clip-art_110489_Shopping_Cart_clip_art_hight.png" class="img-responsive" width="8%" /> SMART CART </p></h1>
   <form method="POST" class="form">   
+    <div class="row">
+      <div class="col-3">Item</div>
+      <div class="col-3">Quantity</div>
+      <div class="col-1">Remove from cart</div>
+    </div>
     <div class="row"> 
     {% for item, quantity in items.items() %}
       <div class="input-group">
-+        <div class="col-sm">^M
-+          <input class="form-control" type="text" value="{{ item }}" name="{{ item }}_name">^M
-+        </div>^M
-+        <div class="col-sm">^M
-+          <input class="form-control"  type="text" value="{{ quantity }}" name="{{ item }}_quantity">^M
-+        </div>^M
-+        <div class="col-sm">^M
-+          <input class="form-control"  type="checkbox" name="{{ item }}_delete">^M
-+        </div>
+        <div class="col-3">
+          <input class="form-control" type="text" value="{{ item }}" name="{{ item }}_name">
+        </div>
+        <div class="col-3">
+          <input class="form-control"  type="text" value="{{ quantity }}" name="{{ item }}_quantity">
+        </div>
+        <div class="col-1">
+          <input class="form-control"  type="checkbox" name="{{ item }}_delete">
+        </div>
       </div>
     {% endfor %}
     </div>
     <div class="row">
-      <input class="btn btn-warning" type="submit" value="Update">
+      <div class="col-sm">
+        <br/><input class="btn btn-primary btn-lg" type="submit" value="Update">
+      </div>
     </div>
   </form>
   <div class="row">
     <form method="POST">
-      <input type="hidden" name="add">
-      <input class="btn btn-primary" type="submit" value="Add">
+      <input type="hidden" name="add">   
+      <div class="col-sm">
+        <input class="btn btn-warning btn-lg" type="submit" value="Add">
+      </div>
     </form>
   </div>
 {% endblock %}
