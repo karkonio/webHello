@@ -40,14 +40,9 @@ def test_post_items_update(client, db_data):
             }
         )
         response = response.data.decode('utf-8')
-        assert '<input type="text" value="banana" name="banana_name">' \
-            in response
-        assert '<input type="text" value="5" name="banana_quantity">' \
-            in response
-        assert '<input type="text" value="apple" name="apple_name">' \
-            in response
-        assert '<input type="text" value="100" name="apple_quantity">' \
-            in response
+        response = html.fromstring(response)
+        assert 'grapes' not in response
+        assert 'apple' in response
 
 
 def test_post_items_remove(client, db_data):
@@ -55,18 +50,11 @@ def test_post_items_remove(client, db_data):
         mocked.return_value = db_data
         response = client.post(
             '/items', data={
-                'banana_name': 'banana',
-                'banana_quantity': 5,
-                'grapes_name': 'grapes',
-                'grapes_quantity': 100,
                 'grapes_delete': 'on'
             }
         )
         response = response.data.decode('utf-8')
-        assert '<input type="text" value="banana" name="banana_name">' \
-            in response
-        assert '<input type="text" value="5" name="banana_quantity">' \
-            in response
+        response = html.fromstring(response)
         assert 'grapes' not in response
 
 
