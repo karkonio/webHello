@@ -2,10 +2,10 @@
 {% block body %}
   <form method="POST" class="form">   
     <div class="row"> 
-    {% for item, quantity in items.items() %}
+    {% for item in items %}
       <div class="input-group">
-        <input class="form-control" type="text" value="{{ item }}" name="{{ item }}_name">
-        <input class="form-control"  type="text" value="{{ quantity }}" name="{{ item }}_quantity">
+        <input class="form-control" type="text" value="{{ item[1] }}" name="{{ item }}_name">
+        <input class="form-control"  type="text" value="{{ item[2] }}" name="{{ item }}_quantity">
         <input class="form-control"  type="checkbox" name="{{ item }}_delete">
       </div>
     {% endfor %}
@@ -14,10 +14,4 @@
       <input class="btn btn-warning" type="submit" value="Update">
     </div>
   </form>
-  <div class="row">
-    <form method="POST">
-      <input type="hidden" name="add">
-      <input class="btn btn-primary" type="submit" value="Add">
-    </form>
-  </div>
 {% endblock %}
