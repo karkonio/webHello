@@ -3,14 +3,15 @@
   <div class="d-flex">
     <img src="https://4vector.com/iraw/free-vector-shopping-cart-clip-art_110489_Shopping_Cart_clip_art_hight.png" class="img-responsive" width="7%" /> 
     <div class="lh-100">
-      <h5>ONLINE SHOP</h5>
+      <h2>ONLINE SHOP</h2>
     </div>
   </div>
   <br/><form method="POST" class="form">   
     <div class="row" >
-        <div class="col-3"><h3>Item</h3></div>
-        <div class="col-3"><h3>Quantity</h3></div>
-        <div class="col-1"><img src="https://cdn2.iconfinder.com/data/icons/color-svg-vector-icons-2/512/remove_product_delete-512.png" class="img-responsive" width="88%" /></div>
+      <div class="col-3"><h3>Item</h3></div>
+      <div class="col-3"><h3>Quantity</h3></div>
+      <div class="col-1">
+        <img src="https://cdn2.iconfinder.com/data/icons/color-svg-vector-icons-2/512/remove_product_delete-512.png" class="img-responsive" width="88%" /></div>
     </div>
     <div class="row"> 
     {% for item, quantity in items.items() %}
