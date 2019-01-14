@@ -3,5 +3,19 @@ body {
 }
 
 h1 {
-    color: #BA55D3   
+    color: #000080; 
+}
+
+p {
+    background-color: #DDA0DD;
+}
+
+h5 {
+    color: #FFFFFF
+}
+
+.d-flex {
+    align-items: center;
+    border-radius: 13px;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
