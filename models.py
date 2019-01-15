@@ -1,12 +1,28 @@
-from peewee import CharField, IntegerField, Model, SqliteDatabase
+from peewee import CharField, IntegerField, Model, SqliteDatabase, ForeignKeyField
 
 
 db = SqliteDatabase('db.sql')
 
 
-class Item(Model):
+class BaseModel(Model):
+    class Meta:
+        database = db
+
+
+class Item(BaseModel):
     name = CharField()
     quantity = IntegerField()
 
-    class Meta:
-        database = db
+
+class Customer(BaseModel):
+    name = CharField()
+    age = IntegerField()
+
+
+class Cart(BaseModel):
+    customer = ForeignKeyField(Customer, backref='carts')
+
+
+class CartItem(BaseModel):
+    cart = ForeignKeyField(Cart, backref='items')
+    item = ForeignKeyField(Item, backref='carts')
