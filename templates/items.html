@@ -1,23 +1,45 @@
 {% extends "layout.html" %}
 {% block body %}
-  <form method="POST" class="form">   
+  <div class="d-flex">
+    <img src="https://4vector.com/iraw/free-vector-shopping-cart-clip-art_110489_Shopping_Cart_clip_art_hight.png" class="img-responsive" width="7%" /> 
+    <div class="lh-100">
+      <h2>ONLINE SHOP</h2>
+    </div>
+  </div>
+  <br/><form method="POST" class="form">   
+    <div class="row" >
+      <div class="col-3"><h3>Item</h3></div>
+      <div class="col-3"><h3>Quantity</h3></div>
+      <div class="col-1">
+        <img src="https://cdn2.iconfinder.com/data/icons/color-svg-vector-icons-2/512/remove_product_delete-512.png" class="img-responsive" width="88%" /></div>
+    </div>
     <div class="row"> 
     {% for item, quantity in items.items() %}
       <div class="input-group">
-        <input class="form-control" type="text" value="{{ item }}" name="{{ item }}_name">
-        <input class="form-control"  type="text" value="{{ quantity }}" name="{{ item }}_quantity">
-        <input class="form-control"  type="checkbox" name="{{ item }}_delete">
+        <div class="col-3">
+          <input class="form-control" type="text" value="{{ item }}" name="{{ item }}_name"">
+        </div>
+        <div class="col-3">
+          <input class="form-control"  type="text" value="{{ quantity }}" name="{{ item }}_quantity">
+        </div>
+        <div class="col-1">
+          <input class="form-control"  type="checkbox" name="{{ item }}_delete">
+        </div>
       </div>
     {% endfor %}
     </div>
     <div class="row">
-      <input class="btn btn-warning" type="submit" value="Update">
+      <div class="col-sm">
+        <br/><input class="btn btn-primary btn-lg" type="submit" value="Update">
+      </div>
     </div>
   </form>
   <div class="row">
     <form method="POST">
-      <input type="hidden" name="add">
-      <input class="btn btn-primary" type="submit" value="Add">
+      <input type="hidden" name="add">   
+      <div class="col-sm">
+        <input class="btn btn-warning btn-lg" type="submit" value="Add">
+      </div>
     </form>
   </div>
 {% endblock %}

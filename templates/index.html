@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
-  <h1>Hello, my dear customer. Welcome to our shop!</h1>
-  <p>For further work go through the next link: 
-  <a href="http://127.0.0.1:5000/items">Your Cart</a></p>
+  <div class="jumbotron mt-3">
+    <h1>Hello, my dear customer. Welcome to our shop!</h1>
+    <h4>For further work press the button below</h4>
+    <br/><a class="btn btn-lg btn-primary" href="/items" role="button">
+      <img src="https://4vector.com/iraw/free-vector-shopping-cart-clip-art_110489_Shopping_Cart_clip_art_hight.png" class="img-responsive" width="6%" />
+      Catalog &raquo;</a>
+  </div>
 {% endblock %}
