@@ -1,4 +1,5 @@
 import json
+import flask_admin
 from flask import Flask
 from flask import render_template
 from flask import request, Response, session, redirect, url_for
@@ -6,6 +7,7 @@ from flask_security import Security, PeeweeUserDatastore, login_required
 from playhouse.shortcuts import model_to_dict, dict_to_model
 
 from models import db, User, Role, UserRoles, Item
+from admin import UserAdmin, ItemAdmin
 
 
 app = Flask(__name__)
@@ -17,6 +19,12 @@ app.config['SECURITY_PASSWORD_SALT'] = 'salt'
 # Setup Flask-Security
 user_datastore = PeeweeUserDatastore(db, User, Role, UserRoles)
 security = Security(app, user_datastore)
+
+
+# Setup flask-admin
+admin = flask_admin.Admin(app, name='Shop Admin')
+admin.add_view(UserAdmin(User))
+admin.add_view(ItemAdmin(Item))
 
 
 # Create a user to test with
