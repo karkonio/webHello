@@ -9,6 +9,11 @@ class BaseModel(Model):
         database = db
 
 
+class User(BaseModel):
+    username = CharField()
+    password = CharField()
+
+
 class Item(BaseModel):
     name = CharField()
     quantity = IntegerField()

@@ -1,10 +1,11 @@
 import json
+from hashlib import sha256
 from flask import Flask
 from flask import render_template
 from flask import request, Response, session, redirect, url_for
 from playhouse.shortcuts import model_to_dict, dict_to_model
 
-from models import Item
+from models import Item, User
 
 
 app = Flask(__name__)
@@ -16,7 +17,7 @@ def index():
     """
     Return index page of the web app
     """
-    name = session.get('name')
+    name = session.get('username')
     response = render_template('index.html', name=name)
     return response
 
@@ -24,11 +25,20 @@ def index():
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        session['name'] = request.form['name']
+        username = request.form['username']
+        password = request.form['password']
+        password = sha256(password.encode('utf-8')).hexdigest()
+        users = User.select().where(
+            User.username == username,
+            User.password == password
+        )
+        if len(users) == 1:
+            session['username'] = username
         return redirect(url_for('index'))
     return '''
         <form method="post">
-            <p><input type=text name=name>
+            <p><input type=text name=username>
+            <p><input type=text name=password>
             <p><input type=submit value=Login>
         </form>
     '''
