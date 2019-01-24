@@ -24,21 +24,5 @@ class AuthMixin:
                 )
 
 
-class UserAdmin(AuthMixin, ModelView):
-    pass
-
-
-class ItemAdmin(AuthMixin, ModelView):
-    pass
-
-
-class CustomerAdmin(AuthMixin, ModelView):
-    pass
-
-
-class CartAdmin(AuthMixin, ModelView):
-    pass
-
-
-class CartItemAdmin(AuthMixin, ModelView):
+class Admin(AuthMixin, ModelView):
     pass

@@ -2,7 +2,7 @@ from peewee import (
     Model, SqliteDatabase,
     CharField, IntegerField, ForeignKeyField, BooleanField
 )
-from flask_security import UserMixin, RoleMixin
+from flask_security import UserMixin
 
 
 db = SqliteDatabase('db.sql')
@@ -36,14 +36,23 @@ class Item(BaseModel):
     name = CharField()
     quantity = IntegerField()
 
+    def __str__(self):
+        return self.name
+
 
 class Customer(BaseModel):
     name = CharField()
     age = IntegerField()
 
+    def __str__(self):
+        return self.name
+
 
 class Cart(BaseModel):
     customer = ForeignKeyField(Customer, backref='carts')
+
+    def __str__(self):
+        return 'Cart {}'.format(self.id)
 
 
 class CartItem(BaseModel):
