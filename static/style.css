@@ -1,3 +1,17 @@
+body {
+    background-color: #E4E4E1;
+    background-image: radial-gradient(at top center, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.03) 100%), linear-gradient(to top, rgba(255,255,255,0.1) 0%, rgba(143,152,157,0.60) 100%);
+    background-blend-mode: normal, multiply;
+}
+
 h1 {
-    color:#8B008B
+    color: #000080; 
+}
+
+.d-flex {
+    align-items: center;
+    border-radius: 13px;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    color: #FFFFE0;
+    background-image: url(https://media.istockphoto.com/photos/marble-background-picture-id611065694);
 }
