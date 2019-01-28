@@ -3,7 +3,7 @@ from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler, Filters
 
-from models import Item, Cart, CartItem
+from models import Item, Cart, CartItem, Customer
 
 
 logging.basicConfig(
@@ -23,10 +23,12 @@ def start(bot, update):
 
 def buy(bot, update, args):
     try:
-        item_id = int(args[0])
-        item = Item.select().where(Item.id == item_id)[0]
+        item_id = args[0]
+        customer_name = args[1]
+        item = Item.select().where(Item.id == item_id)
+        customer = Customer.select().where(Customer.name == customer_name)
         cart = Cart(
-            customer=1
+            customer=customer
         )
         cart.save()
         cart_item = CartItem(
@@ -36,7 +38,30 @@ def buy(bot, update, args):
         cart_item.save()
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='OK {} {}'.format(cart.id, cart_item.id)
+            text='{}, you succesfully bought {}'.
+            format(cart.customer, cart_item.item)
+        )
+    except Exception as e:
+        logging.error(e)
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Fail {}'.format(e)
+        )
+
+
+def user(bot, update, args):
+    try:
+        name = args[0]
+        age = args[1]
+        user = Customer(
+            name=name,
+            age=age
+        )
+        user.save()
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='OK, {}! You are in database and can shopping now :)'
+            .format(name)
         )
     except Exception as e:
         logging.error(e)
@@ -56,16 +81,18 @@ def echo(bot, update):
 def unknown(bot, update):
     bot.send_message(
         chat_id=update.message.chat_id,
-        text="Такой команды не существует. Попробуйте что-нибудь другое :)"
+        text='Такой команды не существует. Попробуйте что-нибудь другое :)'
     )
 
 
 start_handler = CommandHandler('start', start)
 buy_handler = CommandHandler('buy', buy, pass_args=True)
+user_handler = CommandHandler('user', user, pass_args=True)
 echo_handler = MessageHandler(Filters.text, echo)
 unknown_handler = MessageHandler(Filters.command, unknown)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(buy_handler)
+dispatcher.add_handler(user_handler)
 dispatcher.add_handler(echo_handler)
 dispatcher.add_handler(unknown_handler)
 
