@@ -17,7 +17,7 @@ dispatcher = updater.dispatcher
 def start(bot, update):
     bot.send_message(
         chat_id=update.message.chat_id,
-        text="I'm a bot, please talk to me!"
+        text="Добро пожаловать! Ознакомьтесь с командами :)"
     )
 
 
@@ -53,12 +53,21 @@ def echo(bot, update):
     )
 
 
+def unknown(bot, update):
+    bot.send_message(
+        chat_id=update.message.chat_id,
+        text="Такой команды не существует. Попробуйте что-нибудь другое :)"
+    )
+
+
 start_handler = CommandHandler('start', start)
 buy_handler = CommandHandler('buy', buy, pass_args=True)
 echo_handler = MessageHandler(Filters.text, echo)
+unknown_handler = MessageHandler(Filters.command, unknown)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(buy_handler)
 dispatcher.add_handler(echo_handler)
+dispatcher.add_handler(unknown_handler)
 
 
 if __name__ == '__main__':

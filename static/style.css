@@ -8,6 +8,10 @@ h1 {
     color: #000080; 
 }
 
+h2 {
+    color: #000000; 
+}
+
 .d-flex {
     align-items: center;
     border-radius: 13px;

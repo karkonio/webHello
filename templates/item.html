@@ -1,12 +1,28 @@
 {% extends "layout.html" %}
 {% block body %}
-  <form method="GET" class="form">   
-    <div class="row"> 
 
-	<div class="col-12">
-        <input class="form-control" type="text" value="{{ item }}" name="{{ item }}">
-      </div>
+    <div class="d-flex">
+        <img src="https://4vector.com/iraw/free-vector-shopping-cart-clip-art_110489_Shopping_Cart_clip_art_hight.png" class="img-responsive" width="7%" /> 
+        <div class="lh-100">
+            <h2>
+                ALMA SHOP
+            </h2>
+        </div>
+    </div>
+    <div class="container">
+    <div class="col-12">
+        <h3>
+            <br/>Want to buy this item? Follow for TelegramBot @AlmaShopBot 
+        </h3>
+    </div>
 
+    <form method="GET" class="form">   
+        <div class="row justify-content-md-center">
+            <div class="col-12"> 
+                <input class="form-control" type="text" value="{{ item }}" name="{{ item }}">
+            </div>
+
+        </div>
     </form>
-  </div>
+
 {% endblock %}
