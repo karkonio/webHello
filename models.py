@@ -38,6 +38,7 @@ class Item(BaseModel):
     name = CharField()
     quantity = IntegerField()
     manufacturer = CharField()
+    price = IntegerField()
 
     def __str__(self):
         return self.name
@@ -45,7 +46,6 @@ class Item(BaseModel):
 
 class Customer(BaseModel):
     name = CharField()
-    age = IntegerField()
 
     def __str__(self):
         return self.name
@@ -54,6 +54,7 @@ class Customer(BaseModel):
 class Cart(BaseModel):
     customer = ForeignKeyField(Customer, backref='carts')
     paid = BooleanField(default=False)
+    check = IntegerField()
 
     def __str__(self):
         return 'Cart {}'.format(self.id)
@@ -62,6 +63,7 @@ class Cart(BaseModel):
 class CartItem(BaseModel):
     cart = ForeignKeyField(Cart, backref='items')
     item = ForeignKeyField(Item, backref='carts')
+    quantity = IntegerField()
 
 
 class AuthMixin:

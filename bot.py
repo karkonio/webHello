@@ -1,3 +1,4 @@
+import os
 import logging
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
@@ -11,7 +12,8 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
-updater = Updater(token='704148322:AAE7A1WBjsovkDCbE6u-qwCI7CLASyXjm2M')
+token = os.environ('BOT_TOKEN')
+updater = Updater(token=token)
 dispatcher = updater.dispatcher
 
 
@@ -30,6 +32,8 @@ def start(bot, update):
         )
 
 
+def add_to_cart(bot, update, args):
+    """
 def buy(bot, update, args):
     try:
         if len(args) == 2:
@@ -60,14 +64,12 @@ def buy(bot, update, args):
             chat_id=update.message.chat_id,
             text='Fail {}'.format(e)
         )
+    """
 
 
 def name(bot, update, args):
-    """
-    Данная функция проверяет наличие пользователя в БД по имени.
-    Если такого пользователя нет, вносит его в БД.
-
-    """
+    # Данная функция проверяет наличие пользователя в БД по имени.
+    # Если такого пользователя нет, вносит его в БД.
     name = args[0]
     customers = Customer.select(Customer.name)
     customers = [model_to_dict(customer) for customer in customers]
@@ -89,6 +91,7 @@ def name(bot, update, args):
             chat_id=update.message.chat_id,
             text='Отлично, {}. Мы добавили вас в базу.'.format(name)
         )
+    return name
 
 
 def echo(bot, update):
@@ -108,11 +111,13 @@ def unknown(bot, update):
 start_handler = CommandHandler('start', start)
 buy_handler = CommandHandler('buy', buy, pass_args=True)
 name_handler = CommandHandler('name', name, pass_args=True)
+cart_handler = CommandHandler('cart', add_to_cart, pass_args=True)
 echo_handler = MessageHandler(Filters.text, echo)
 unknown_handler = MessageHandler(Filters.command, unknown)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(buy_handler)
 dispatcher.add_handler(name_handler)
+dispatcher.add_handler(cart_handler)
 dispatcher.add_handler(echo_handler)
 dispatcher.add_handler(unknown_handler)
 

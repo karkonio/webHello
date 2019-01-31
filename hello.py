@@ -57,6 +57,5 @@ def items():
     if request.method == 'GET':
         items = Item.select()
         items = [model_to_dict(item) for item in items]
-        # items = json.dumps(items)
         print(item for item in items)
         return render_template('items.html', items=items)
