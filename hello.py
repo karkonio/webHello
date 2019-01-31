@@ -1,10 +1,9 @@
-import json
 import flask_admin
 from flask import Flask
 from flask import render_template
-from flask import request, Response, session, redirect, url_for
+from flask import request, session
 from flask_security import Security, PeeweeUserDatastore, login_required
-from playhouse.shortcuts import model_to_dict, dict_to_model
+from playhouse.shortcuts import model_to_dict
 
 from models import db, User, Role, UserRoles, Item, Customer, Cart, CartItem
 from admin import UserAdmin, ItemAdmin, CustomerAdmin, CartAdmin, CartItemAdmin
@@ -53,34 +52,11 @@ def index():
     return response
 
 
-@app.route('/api/items/', methods=['GET', 'POST'])
-@app.route('/api/items/<item_id>/')
-def items(item_id=None):
+@app.route('/items', methods=['GET', 'POST'])
+def items():
     if request.method == 'GET':
-        if item_id is not None:
-            items_query = Item.select().where(Item.id == item_id)
-            try:
-                item = items_query[0]
-                item = json.dumps(model_to_dict(item))
-                return render_template('item.html', item=item)
-            except IndexError:
-                return Response(
-                    json.dumps({'error': 'not found'}),
-                    status=404
-                )
-        else:
-            items = Item.select()
-            items = [model_to_dict(item) for item in items]
-            # items = json.dumps(items)
-            print(item for item in items)
-            return render_template('items.html', items=items)
-    elif request.method == 'POST':
-        item = dict_to_model(
-            data=request.json,
-            model_class=Item
-        )
-        item.save()
-        return Response(
-            json.dumps(model_to_dict(item)),
-            status=201
-        )
+        items = Item.select()
+        items = [model_to_dict(item) for item in items]
+        # items = json.dumps(items)
+        print(item for item in items)
+        return render_template('items.html', items=items)

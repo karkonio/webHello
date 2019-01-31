@@ -1,5 +1,4 @@
 from flask import abort, redirect, url_for, request
-from flask_admin.contrib.peewee import ModelView
 from flask_security import current_user
 from peewee import (
     Model, SqliteDatabase,
@@ -38,6 +37,7 @@ class UserRoles(BaseModel):
 class Item(BaseModel):
     name = CharField()
     quantity = IntegerField()
+    manufacturer = CharField()
 
     def __str__(self):
         return self.name
@@ -53,6 +53,7 @@ class Customer(BaseModel):
 
 class Cart(BaseModel):
     customer = ForeignKeyField(Customer, backref='carts')
+    paid = BooleanField(default=False)
 
     def __str__(self):
         return 'Cart {}'.format(self.id)
