@@ -32,13 +32,18 @@ admin.add_view(CartItemAdmin(CartItem))
 # Create a user to test with
 @app.before_first_request
 def create_user():
-    for Model in (Role, User, UserRoles):
+    for Model in (
+        Role, User, UserRoles,
+        Item, Cart, CartItem, Customer
+    ):
         Model.drop_table(fail_silently=True)
         Model.create_table(fail_silently=True)
     user_datastore.create_user(
         email='test@test.com',
         password='password'
     )
+    item = Item(name='banana', quantity=10, price=10, manufacturer='nature')
+    item.save()
 
 
 @app.route('/')
