@@ -54,7 +54,7 @@ class Customer(BaseModel):
 class Cart(BaseModel):
     customer = ForeignKeyField(Customer, backref='carts')
     paid = BooleanField(default=False)
-    check = IntegerField()
+    price = IntegerField(null=True)
 
     def __str__(self):
         return 'Cart {}'.format(self.id)

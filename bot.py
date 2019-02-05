@@ -22,8 +22,10 @@ def start(bot, update):
     try:
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='Здравствуйте! Как вас Зовут?'
-            'Введите свое имя используя команду /name + Ваше имя, чтобы мы вас узнали :)'
+            text='Здравствуйте! Как вас Зовут?  '
+            'Введите свое имя используя команду /name + Ваше имя, '
+            'чтобы мы вас узнали :) '
+            'Ознакомиться с товарами можно на нашем сайте http://127.0.0.1:5000/'
         )
     except Exception as e:
         logging.error(e, exc_info=True)
@@ -71,28 +73,77 @@ def buy(bot, update, args):
 def name(bot, update, args):
     # Данная функция проверяет наличие пользователя в БД по имени.
     # Если такого пользователя нет, вносит его в БД.
-    name = args[0]
-    customers = Customer.select(Customer.name)
-    customers = [model_to_dict(customer) for customer in customers]
-    customers_list = []
-    for customer in customers:
-        customers_list.append(customer['name'])
-    if name in customers_list:
+    # И создает для него корзину, т.е. каждый новый старт - новая корзина
+    try:
+        name = args[0]
+        customers = Customer.select(Customer.name)
+        customers = [model_to_dict(customer) for customer in customers]
+        customers_list = []
+        for customer in customers:
+            customers_list.append(customer['name'])
+        if name in customers_list:
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text='{}, мы нашли вас в базе.'.format(name)
+            )
+        elif name not in customers_list:
+            customer = Customer(
+                name=name
+            )
+            customer.save()
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text='Отлично, {}. Мы добавили вас в базу'.format(name)
+            )
+        customers = Customer.select().where(Customer.name == name)
+        customer = [model_to_dict(customer) for customer in customers][0]
+        print(customer)
+        cart = Cart(
+            customer=customer['id']
+        )
+        cart.save()
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='{}, мы нашли вас в базе.'.format(name)
+            text='ID вашей корзины {}'.format(cart.id)
         )
-    elif name not in customers_list:
-        customer = Customer(
-            name=name,
-            age=20
-        )
-        customer.save()
+    except Exception as e:
+        logging.error(e, exc_info=True)
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='Отлично, {}. Мы добавили вас в базу.'.format(name)
+            text='Fail {}'.format(e)
         )
-    return name
+
+
+def cart(bot, update, args):
+    try:
+        if len(args) == 2:
+            customer_name = args[1]
+            customer = Customer.select().where(
+                Customer.name == customer_name
+            )[0]
+        else:
+            item_id = args[0]
+            item = Item.select().where(Item.id == item_id)[0]
+            cart = Cart(
+                customer=customer
+            )
+            cart.save()
+            cart_item = CartItem(
+                cart=cart,
+                item=item
+            )
+            cart_item.save()
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text='{}, you succesfully bought {}'.
+                format(cart.customer, cart_item.item)
+            )
+    except Exception as e:
+        logging.error(e, exc_info=True)
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Fail {}'.format(e)
+        )
 
 
 def echo(bot, update):
@@ -110,13 +161,13 @@ def unknown(bot, update):
 
 
 start_handler = CommandHandler('start', start)
-buy_handler = CommandHandler('buy', buy, pass_args=True)
+# buy_handler = CommandHandler('buy', buy, pass_args=True)
 name_handler = CommandHandler('name', name, pass_args=True)
-cart_handler = CommandHandler('cart', add_to_cart, pass_args=True)
+cart_handler = CommandHandler('cart', cart, pass_args=True)
 echo_handler = MessageHandler(Filters.text, echo)
 unknown_handler = MessageHandler(Filters.command, unknown)
 dispatcher.add_handler(start_handler)
-dispatcher.add_handler(buy_handler)
+# dispatcher.add_handler(buy_handler)
 dispatcher.add_handler(name_handler)
 dispatcher.add_handler(cart_handler)
 dispatcher.add_handler(echo_handler)
