@@ -25,7 +25,7 @@ def start(bot, update):
             text='Здравствуйте! Как вас Зовут?  '
             'Введите свое имя используя команду /name + Ваше имя, '
             'чтобы мы вас узнали :) '
-            'Ознакомиться с товарами можно на нашем сайте http://127.0.0.1:5000/'
+            'Ознакомиться с товарами можно на сайте http://127.0.0.1:5000/'
         )
     except Exception as e:
         logging.error(e, exc_info=True)
@@ -33,41 +33,6 @@ def start(bot, update):
             chat_id=update.message.chat_id,
             text='Fail {}'.format(e)
         )
-
-
-def add_to_cart(bot, update, args):
-    """
-def buy(bot, update, args):
-    try:
-        if len(args) == 2:
-            customer_name = args[1]
-            customer = Customer.select().where(
-                Customer.name == customer_name
-            )[0]
-        else:
-            item_id = args[0]
-            item = Item.select().where(Item.id == item_id)[0]
-            cart = Cart(
-                customer=customer
-            )
-            cart.save()
-            cart_item = CartItem(
-                cart=cart,
-                item=item
-            )
-            cart_item.save()
-            bot.send_message(
-                chat_id=update.message.chat_id,
-                text='{}, you succesfully bought {}'.
-                format(cart.customer, cart_item.item)
-            )
-    except Exception as e:
-        logging.error(e, exc_info=True)
-        bot.send_message(
-            chat_id=update.message.chat_id,
-            text='Fail {}'.format(e)
-        )
-    """
 
 
 def name(bot, update, args):
@@ -145,6 +110,24 @@ def cart(bot, update, args):
         )
 
 
+def buy(bot, update, args):
+    # Принимает айдишник корзины и закрывает сделку
+    try:
+        cart_id = args[0]
+        cart = Cart.update(paid=True).where(Cart.id == cart_id)
+        cart.execute()
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Сделка закрыта :) '
+        )
+    except Exception as e:
+        logging.error(e, exc_info=True)
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Fail {}'.format(e)
+        )
+
+
 def echo(bot, update):
     bot.send_message(
         chat_id=update.message.chat_id,
@@ -160,15 +143,15 @@ def unknown(bot, update):
 
 
 start_handler = CommandHandler('start', start)
-# buy_handler = CommandHandler('buy', buy, pass_args=True)
 name_handler = CommandHandler('name', name, pass_args=True)
 cart_handler = CommandHandler('cart', cart, pass_args=True)
+buy_handler = CommandHandler('buy', buy, pass_args=True)
 echo_handler = MessageHandler(Filters.text, echo)
 unknown_handler = MessageHandler(Filters.command, unknown)
 dispatcher.add_handler(start_handler)
-# dispatcher.add_handler(buy_handler)
 dispatcher.add_handler(name_handler)
 dispatcher.add_handler(cart_handler)
+dispatcher.add_handler(buy_handler)
 dispatcher.add_handler(echo_handler)
 dispatcher.add_handler(unknown_handler)
 
