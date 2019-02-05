@@ -97,14 +97,15 @@ def name(bot, update, args):
             )
         customers = Customer.select().where(Customer.name == name)
         customer = [model_to_dict(customer) for customer in customers][0]
-        print(customer)
         cart = Cart(
             customer=customer['id']
         )
         cart.save()
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='ID вашей корзины {}'.format(cart.id)
+            text='ID вашей корзины {}. '
+            'Для добавления товаров в корзину используйте команду /cart '
+            '+ ID вашей корзины + ID товара и его количество'.format(cart.id)
         )
     except Exception as e:
         logging.error(e, exc_info=True)
@@ -115,29 +116,27 @@ def name(bot, update, args):
 
 
 def cart(bot, update, args):
+    # Добавление КартИтемов в корзину
+    # айди корзины + айди товара + количество
     try:
-        if len(args) == 2:
-            customer_name = args[1]
-            customer = Customer.select().where(
-                Customer.name == customer_name
-            )[0]
-        else:
-            item_id = args[0]
-            item = Item.select().where(Item.id == item_id)[0]
-            cart = Cart(
-                customer=customer
-            )
-            cart.save()
-            cart_item = CartItem(
-                cart=cart,
-                item=item
-            )
-            cart_item.save()
-            bot.send_message(
-                chat_id=update.message.chat_id,
-                text='{}, you succesfully bought {}'.
-                format(cart.customer, cart_item.item)
-            )
+        quantity = args[2]
+        item_id = args[1]
+        item = Item.select().where(
+            Item.id == item_id
+        )[0]
+        cart_id = args[0]
+        cart = Cart.select().where(Cart.id == cart_id)[0]
+        cart_item = CartItem(
+            cart=cart,
+            item=item,
+            quantity=quantity
+        )
+        cart_item.save()
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='{} в корзине ({} шт.)'.
+            format(cart_item.item, cart_item.quantity)
+        )
     except Exception as e:
         logging.error(e, exc_info=True)
         bot.send_message(
