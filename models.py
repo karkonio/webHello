@@ -1,9 +1,10 @@
 from flask import abort, redirect, url_for, request
 from flask_security import current_user
 from peewee import (
-    Model, SqliteDatabase,
+    SqliteDatabase,
     CharField, IntegerField, ForeignKeyField, BooleanField
 )
+from playhouse.signals import Model, post_save
 from flask_security import UserMixin
 
 
@@ -85,3 +86,13 @@ class AuthMixin:
                         next=request.url
                     )
                 )
+
+
+@post_save(sender=CartItem)
+def on_save_handler(model_class, instance, created):
+    cart = instance.cart
+    prices = [
+        item.item.price * item.quantity for item in cart.items
+    ]
+    instance.cart.price = sum(prices)
+    instance.cart.save()
