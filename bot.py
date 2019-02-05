@@ -12,17 +12,18 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
-token = os.environ('BOT_TOKEN')
+token = os.environ['BOT_TOKEN']
 updater = Updater(token=token)
 dispatcher = updater.dispatcher
 
 
 def start(bot, update):
+    # Бот просит представиться при каждом вызове старт
     try:
         bot.send_message(
             chat_id=update.message.chat_id,
             text='Здравствуйте! Как вас Зовут?'
-            'Используйте команду /name + Ваше имя'
+            'Введите свое имя используя команду /name + Ваше имя, чтобы мы вас узнали :)'
         )
     except Exception as e:
         logging.error(e, exc_info=True)
