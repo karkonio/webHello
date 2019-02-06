@@ -60,35 +60,42 @@ def name(bot, update, args):
     Если такого пользователя нет, вносит его в БД.
     И создает для него корзину, т.е. каждый новый name - новая корзина
     '''
-    name = args[0]
-    customers = Customer.select(Customer.name).where(Customer.name == name)
-    if len(customers) == 1:
-        customer = customers[0]
+    try:
+        name = args[0]
+        customers = Customer.select(Customer.name).where(Customer.name == name)
+        if len(customers) == 1:
+            customer = customers[0]
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text='{}, мы нашли вас в базе.'.format(customer)
+            )
+        if len(customers) == 0:
+            customer = Customer(
+                name=name
+            )
+            customer.save()
+            bot.send_message(
+                chat_id=update.message.chat_id,
+                text='Отлично, {}. Мы добавили вас в базу'.format(name)
+            )
+        customers = Customer.select().where(Customer.name == name)
+        customer = [model_to_dict(customer) for customer in customers][0]
+        cart = Cart(
+            customer=customer['id']
+        )
+        cart.save()
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='{}, мы нашли вас в базе.'.format(customer)
+            text='ID вашей корзины {}. '
+            '\nДля добавления товаров в корзину используйте команду /add '
+            '+ ID вашей корзины + ID товара и его количество'.format(cart.id)
         )
-    if len(customers) == 0:
-        customer = Customer(
-            name=name
-        )
-        customer.save()
+    except:
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='Отлично, {}. Мы добавили вас в базу'.format(name)
+            text='Вы забыли ввести имя :()'
+            '\nПопробуйте еще разок.'
         )
-    customers = Customer.select().where(Customer.name == name)
-    customer = [model_to_dict(customer) for customer in customers][0]
-    cart = Cart(
-        customer=customer['id']
-    )
-    cart.save()
-    bot.send_message(
-        chat_id=update.message.chat_id,
-        text='ID вашей корзины {}. '
-        '\nДля добавления товаров в корзину используйте команду /add '
-        '+ ID вашей корзины + ID товара и его количество'.format(cart.id)
-    )
 
 
 @exception
