@@ -37,7 +37,6 @@ class UserRoles(BaseModel):
 
 class Item(BaseModel):
     name = CharField()
-    quantity = IntegerField()
     manufacturer = CharField()
     price = IntegerField()
 
