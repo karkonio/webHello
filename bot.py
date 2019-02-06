@@ -30,13 +30,12 @@ def exception(func):
     return wrapper
 
 
-@exception
 def start(bot, update):
     # Бот просит представиться при каждом вызове старт
     bot.send_message(
         chat_id=update.message.chat_id,
         text='Здравствуйте! Как вас Зовут?'
-        '\nВы можете ознакомиться с командами помощью /help'
+        '\nВы можете ознакомиться с функционалом бота помощью команды /help'
         '\nОзнакомиться с товарами можно на сайте http://127.0.0.1:5000/'
     )
 
@@ -44,10 +43,13 @@ def start(bot, update):
 def help(bot, update):
     bot.send_message(
         chat_id=update.message.chat_id,
-        text='/name + (Ваше имя) - проверяем Вас в базе и создаем корзинку'
-        '\n/cart + (ID вашей корзины) + (ID товара) + (количество продуктов) '
-        '- добавляет товар в вашу корзину'
-        '\n/buy + (ID вашей корзины) - олачивает по стоимости корзины'
+        text='/name + (Ваше имя) - проверяем Вас в базе и выдаем ID корзины;'
+        '\n\n/add + (ID вашей корзины) + (ID товара) + (количество продуктов) '
+        '- добавляет определенное количество товара в вашу корзину;'
+        '\n\n/remove + (ID товара в корзине) - удаляет определенный'
+        ' товар из корзины'
+        '\n\n/price + (ID корзины) - вывод текущей стоимости товаров в корзине'
+        '\n\n/buy + (ID вашей корзины) - олачивает всю стоимость корзины;'
     )
 
 
@@ -56,7 +58,7 @@ def name(bot, update, args):
     '''
     Данная функция проверяет наличие пользователя в БД по имени.
     Если такого пользователя нет, вносит его в БД.
-    И создает для него корзину, т.е. каждый новый старт - новая корзина
+    И создает для него корзину, т.е. каждый новый name - новая корзина
     '''
     name = args[0]
     customers = Customer.select(Customer.name).where(Customer.name == name)
@@ -84,7 +86,7 @@ def name(bot, update, args):
     bot.send_message(
         chat_id=update.message.chat_id,
         text='ID вашей корзины {}. '
-        '\nДля добавления товаров в корзину используйте команду /add'
+        '\nДля добавления товаров в корзину используйте команду /add '
         '+ ID вашей корзины + ID товара и его количество'.format(cart.id)
     )
 
@@ -108,9 +110,33 @@ def add(bot, update, args):
     cart_item.save()
     bot.send_message(
         chat_id=update.message.chat_id,
-        text='{} в корзине ({} шт.)'.
-        format(cart_item.item, cart_item.quantity)
+        text='{} в корзине ({} шт.)'
+        '\nID операции - {}'
+        'Для удаления этого товара из корзины используйте команду'
+        ' /remove + ID операции'.
+        format(cart_item.item, cart_item.quantity, cart_item.id)
     )
+
+
+@exception
+def remove(bot, update, args):
+    if len(args) == 1:
+        cartitem_id = args[0]
+        cart_item = CartItem.select().where(
+            CartItem.id == cartitem_id
+        )[0]
+        cart_item.delete()
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='OK, {} удален из Вашей корзины.'.
+            format(cart_item.item.name)
+        )
+    else:
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Вы забыли ввести ID операции :('
+            '\nПопробуйте еще разок.'
+        )
 
 
 def buy(bot, update, args):
@@ -142,6 +168,7 @@ start_handler = CommandHandler('start', start)
 help_handler = CommandHandler('help', help)
 name_handler = CommandHandler('name', name, pass_args=True)
 add_handler = CommandHandler('add', add, pass_args=True)
+remove_handler = CommandHandler('remove', remove, pass_args=True)
 buy_handler = CommandHandler('buy', buy, pass_args=True)
 echo_handler = MessageHandler(Filters.text, echo)
 unknown_handler = MessageHandler(Filters.command, unknown)
@@ -149,6 +176,7 @@ dispatcher.add_handler(start_handler)
 dispatcher.add_handler(help_handler)
 dispatcher.add_handler(name_handler)
 dispatcher.add_handler(add_handler)
+dispatcher.add_handler(remove_handler)
 dispatcher.add_handler(buy_handler)
 dispatcher.add_handler(echo_handler)
 dispatcher.add_handler(unknown_handler)
