@@ -22,10 +22,9 @@ def start(bot, update):
     try:
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='Здравствуйте! Как вас Зовут?  '
-            'Введите свое имя используя команду /name + Ваше имя, '
-            'чтобы мы вас узнали :) '
-            'Ознакомиться с товарами можно на сайте http://127.0.0.1:5000/'
+            text='Здравствуйте! Как вас Зовут?'
+            '\nВы можете ознакомиться с командами помощью /help'
+            '\nОзнакомиться с товарами можно на сайте http://127.0.0.1:5000/'
         )
     except Exception as e:
         logging.error(e, exc_info=True)
@@ -33,6 +32,16 @@ def start(bot, update):
             chat_id=update.message.chat_id,
             text='Fail {}'.format(e)
         )
+
+
+def help(bot, update):
+    bot.send_message(
+        chat_id=update.message.chat_id,
+        text='/name + (Ваше имя) - проверяем Вас в базе и создаем корзинку'
+        '\n/cart + (ID вашей корзины) + (ID товара) + (количество продуктов) '
+        '- добавляет товар в вашу корзину'
+        '\n/buy + (ID вашей корзины) - олачивает по стоимости корзины'
+    )
 
 
 def name(bot, update, args):
@@ -69,7 +78,7 @@ def name(bot, update, args):
         bot.send_message(
             chat_id=update.message.chat_id,
             text='ID вашей корзины {}. '
-            'Для добавления товаров в корзину используйте команду /cart '
+            '\nДля добавления товаров в корзину используйте команду /cart'
             '+ ID вашей корзины + ID товара и его количество'.format(cart.id)
         )
     except Exception as e:
@@ -143,12 +152,14 @@ def unknown(bot, update):
 
 
 start_handler = CommandHandler('start', start)
+help_handler = CommandHandler('help', help)
 name_handler = CommandHandler('name', name, pass_args=True)
 cart_handler = CommandHandler('cart', cart, pass_args=True)
 buy_handler = CommandHandler('buy', buy, pass_args=True)
 echo_handler = MessageHandler(Filters.text, echo)
 unknown_handler = MessageHandler(Filters.command, unknown)
 dispatcher.add_handler(start_handler)
+dispatcher.add_handler(help_handler)
 dispatcher.add_handler(name_handler)
 dispatcher.add_handler(cart_handler)
 dispatcher.add_handler(buy_handler)
