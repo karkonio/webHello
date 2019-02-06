@@ -41,15 +41,16 @@ def start(bot, update):
 
 
 def help(bot, update):
+    # Список всех команд
     bot.send_message(
         chat_id=update.message.chat_id,
         text='/name + (Ваше имя) - проверяем Вас в базе и выдаем ID корзины;'
         '\n\n/add + (ID вашей корзины) + (ID товара) + (количество продуктов) '
         '- добавляет определенное количество товара в вашу корзину;'
         '\n\n/remove + (ID товара в корзине) - удаляет определенный'
-        ' товар из корзины'
-        '\n\n/price + (ID корзины) - вывод текущей стоимости товаров в корзине'
-        '\n\n/buy + (ID вашей корзины) - олачивает всю стоимость корзины;'
+        ' товар из корзины;'
+        '\n\n/price + (ID корзины) - вывод текущей стоимости товаров в корзине;'
+        '\n\n/buy + (ID вашей корзины) - олачивает всю стоимость корзины.'
     )
 
 
@@ -67,7 +68,8 @@ def name(bot, update, args):
             customer = customers[0]
             bot.send_message(
                 chat_id=update.message.chat_id,
-                text='{}, мы нашли вас в базе.'.format(customer)
+                text='{}, мы Вас узнали :)'
+                '\nРады вновь Вас видеть в Alma Shop.'.format(customer)
             )
         if len(customers) == 0:
             customer = Customer(
@@ -76,7 +78,7 @@ def name(bot, update, args):
             customer.save()
             bot.send_message(
                 chat_id=update.message.chat_id,
-                text='Отлично, {}. Мы добавили вас в базу'.format(name)
+                text='Отлично, {}. Мы добавили Вас в базу.'.format(name)
             )
         customers = Customer.select().where(Customer.name == name)
         customer = [model_to_dict(customer) for customer in customers][0]
@@ -86,52 +88,75 @@ def name(bot, update, args):
         cart.save()
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='ID вашей корзины {}. '
-            '\nДля добавления товаров в корзину используйте команду /add '
-            '+ ID вашей корзины + ID товара и его количество'.format(cart.id)
+            text='ID вашей корзины {}. Не потеряйте!'
+            '\n\nДля добавления товаров в корзину используйте команду:'
+            '\n/add + ID вашей корзины + ID товара и необходимое количество'.
+            format(cart.id)
         )
-    except:
+    except IndexError:
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='Вы забыли ввести имя :()'
+            text='Вы забыли ввести имя :('
             '\nПопробуйте еще разок.'
         )
 
 
 @exception
 def add(bot, update, args):
-    # Добавление КартИтемов в корзину
-    # айди корзины + айди товара + количество
-    quantity = args[2]
-    item_id = args[1]
-    item = Item.select().where(
-        Item.id == item_id
-    )[0]
-    cart_id = args[0]
-    cart = Cart.select().where(Cart.id == cart_id)[0]
-    cart_item = CartItem(
-        cart=cart,
-        item=item,
-        quantity=quantity
-    )
-    cart_item.save()
-    bot.send_message(
-        chat_id=update.message.chat_id,
-        text='{} в корзине ({} шт.)'
-        '\nID операции - {}'
-        'Для удаления этого товара из корзины используйте команду'
-        ' /remove + ID операции'.
-        format(cart_item.item, cart_item.quantity, cart_item.id)
-    )
+    '''
+    Добавление товаров в корзину
+    ID корзины + ID товара(сайте) + количество.
+    Выдает ID операции
+    '''
+    if len(args) == 3:
+        quantity = args[2]
+        item_id = args[1]
+        item = Item.select().where(
+            Item.id == item_id
+        )[0]
+        cart_id = args[0]
+        cart = Cart.select().where(Cart.id == cart_id)[0]
+        cart_item = CartItem(
+            cart=cart,
+            item=item,
+            quantity=quantity
+        )
+        cart_item.save()
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='{} в корзине ({} шт.)'
+            '\n\nID операции - {}. Не потеряйте, пригодится при удалении.'.
+            format(cart_item.item, cart_item.quantity, cart_item.id)
+        )
+    elif len(args) == 2:
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Кажется, Вы не ввели нужное количество продукта.'
+            '\nПопробуйте еще разок.'
+            '\n/add + ID вашей корзины + ID товара и необходимое количество.'
+        )
+    elif len(args) == 1:
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Кажется, Вы не ввели ID товара и количество.'
+            '\nПопробуйте еще разок.'
+            '\n/add + ID вашей корзины + ID товара и необходимое количество.'
+        )
+    elif len(args) == 0:
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Похоже, вы ничего не добавили.'
+            '\nПопробуйте еще разок.'
+            '\n/add + ID вашей корзины + ID товара и необходимое количество.'
+        )
 
 
 @exception
 def remove(bot, update, args):
+    # Удаляет CartItem по ID
     if len(args) == 1:
         cartitem_id = args[0]
-        cart_item = CartItem.select().where(
-            CartItem.id == cartitem_id
-        )[0]
+        cart_item = CartItem.select().where(CartItem.id == cartitem_id)[0]
         cart_item.delete()
         bot.send_message(
             chat_id=update.message.chat_id,
@@ -143,18 +168,48 @@ def remove(bot, update, args):
             chat_id=update.message.chat_id,
             text='Вы забыли ввести ID операции :('
             '\nПопробуйте еще разок.'
+            '\n/remove + ID операции, которую Вы хотите отменить.'
         )
 
 
+@exception
+def price(bot, update, args):
+    # Возвращает общую стоимость товаров в корзине
+    # Принимает Id корзины
+    try:
+        cart_id = args[0]
+        cart = Cart.select().where(Cart.id == cart_id)[0]
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Общая стоимость составляет: {} KZT.'.format(cart.price)
+        )
+    except IndexError:
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Похоже, вы не ввели ID корзины'
+            '\nПопробуйте еще разок.'
+        )
+
+
+@exception
 def buy(bot, update, args):
-    # Принимает айдишник корзины и закрывает сделку
-    cart_id = args[0]
-    cart = Cart.update(paid=True).where(Cart.id == cart_id)
-    cart.execute()
-    bot.send_message(
-        chat_id=update.message.chat_id,
-        text='Сделка закрыта :) '
-    )
+    # Принимает ID корзины и закрывает сделку
+    try:
+        cart_id = args[0]
+        cart = Cart.update(paid=True).where(Cart.id == cart_id)
+        cart.execute()
+        cart = Cart.select().where(Cart.id == cart_id)[0]
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Оплата прошла успешно :)'
+            '\nСумма оплаты составляет: {} KZT.'.format(cart.price)
+        )
+    except IndexError:
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text='Похоже, вы не ввели ID корзины'
+            '\nПопробуйте еще разок.'
+        )
 
 
 def echo(bot, update):
@@ -167,7 +222,8 @@ def echo(bot, update):
 def unknown(bot, update):
     bot.send_message(
         chat_id=update.message.chat_id,
-        text='Такой команды не существует. Попробуйте что-нибудь другое :)'
+        text='Такой команды не существует.'
+        '\nНажмите на /help'
     )
 
 
@@ -176,6 +232,7 @@ help_handler = CommandHandler('help', help)
 name_handler = CommandHandler('name', name, pass_args=True)
 add_handler = CommandHandler('add', add, pass_args=True)
 remove_handler = CommandHandler('remove', remove, pass_args=True)
+price_handler = CommandHandler('price', price, pass_args=True)
 buy_handler = CommandHandler('buy', buy, pass_args=True)
 echo_handler = MessageHandler(Filters.text, echo)
 unknown_handler = MessageHandler(Filters.command, unknown)
@@ -184,6 +241,7 @@ dispatcher.add_handler(help_handler)
 dispatcher.add_handler(name_handler)
 dispatcher.add_handler(add_handler)
 dispatcher.add_handler(remove_handler)
+dispatcher.add_handler(price_handler)
 dispatcher.add_handler(buy_handler)
 dispatcher.add_handler(echo_handler)
 dispatcher.add_handler(unknown_handler)
