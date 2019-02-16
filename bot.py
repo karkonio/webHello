@@ -56,11 +56,11 @@ def help(bot, update):
 
 @exception
 def name(bot, update, args):
-    '''
+    """
     Данная функция проверяет наличие пользователя в БД по имени.
     Если такого пользователя нет, вносит его в БД.
     И создает для него корзину, т.е. каждый новый name - новая корзина
-    '''
+    """
     try:
         name = args[0]
         customers = Customer.select(Customer.name).where(Customer.name == name)
@@ -71,7 +71,7 @@ def name(bot, update, args):
                 text='{}, мы Вас узнали :)'
                 '\nРады вновь Вас видеть в Alma Shop.'.format(customer)
             )
-        if len(customers) == 0:
+        elif len(customers) == 0:
             customer = Customer(
                 name=name
             )
@@ -103,11 +103,11 @@ def name(bot, update, args):
 
 @exception
 def add(bot, update, args):
-    '''
+    """
     Добавление товаров в корзину
     ID корзины + ID товара(сайте) + количество.
     Выдает ID операции
-    '''
+    """
     if len(args) == 3:
         quantity = args[2]
         item_id = args[1]
@@ -131,7 +131,7 @@ def add(bot, update, args):
     elif len(args) == 2:
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='Кажется, Вы не ввели нужное количество продукта.'
+            text='Кажется, Вы что-то ввели не правильно.'
             '\nПопробуйте еще разок.'
             '\n/add + ID вашей корзины + ID товара и необходимое количество.'
         )
@@ -186,7 +186,7 @@ def price(bot, update, args):
     except IndexError:
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='Похоже, вы не ввели ID корзины'
+            text='Похоже, вы не ввели ID корзины или ввели его не правильно.'
             '\nПопробуйте еще разок.'
         )
 
@@ -207,7 +207,7 @@ def buy(bot, update, args):
     except IndexError:
         bot.send_message(
             chat_id=update.message.chat_id,
-            text='Похоже, вы не ввели ID корзины'
+            text='Похоже, вы не ввели ID корзины или ввели его не правильно.'
             '\nПопробуйте еще разок.'
         )
 
