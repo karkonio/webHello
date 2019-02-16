@@ -1,10 +1,10 @@
 from flask import abort, redirect, url_for, request
-from flask_admin.contrib.peewee import ModelView
 from flask_security import current_user
 from peewee import (
-    Model, SqliteDatabase,
+    SqliteDatabase,
     CharField, IntegerField, ForeignKeyField, BooleanField
 )
+from playhouse.signals import Model, post_save
 from flask_security import UserMixin
 
 
@@ -37,7 +37,8 @@ class UserRoles(BaseModel):
 
 class Item(BaseModel):
     name = CharField()
-    quantity = IntegerField()
+    manufacturer = CharField()
+    price = IntegerField()
 
     def __str__(self):
         return self.name
@@ -45,7 +46,6 @@ class Item(BaseModel):
 
 class Customer(BaseModel):
     name = CharField()
-    age = IntegerField()
 
     def __str__(self):
         return self.name
@@ -53,6 +53,8 @@ class Customer(BaseModel):
 
 class Cart(BaseModel):
     customer = ForeignKeyField(Customer, backref='carts')
+    paid = BooleanField(default=False)
+    price = IntegerField(null=True)
 
     def __str__(self):
         return 'Cart {}'.format(self.id)
@@ -61,6 +63,7 @@ class Cart(BaseModel):
 class CartItem(BaseModel):
     cart = ForeignKeyField(Cart, backref='items')
     item = ForeignKeyField(Item, backref='carts')
+    quantity = IntegerField()
 
 
 class AuthMixin:
@@ -82,3 +85,13 @@ class AuthMixin:
                         next=request.url
                     )
                 )
+
+
+@post_save(sender=CartItem)
+def on_save_handler(model_class, instance, created):
+    cart = instance.cart
+    prices = [
+        item.item.price * item.quantity for item in cart.items
+    ]
+    instance.cart.price = sum(prices)
+    instance.cart.save()
